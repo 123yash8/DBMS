@@ -1,0 +1,28 @@
+CREATE TABLE Stud_Marks (
+    name VARCHAR2(100),
+    total_marks NUMBER
+);
+
+CREATE TABLE Result (
+    Roll NUMBER,
+    Name VARCHAR2(100),
+    Class VARCHAR2(100)
+);
+CREATE OR REPLACE PROCEDURE proc_Grade AS 
+BEGIN
+    FOR r IN (SELECT * FROM Stud_Marks) LOOP
+        IF r.total_marks <= 1500 AND r.total_marks >= 990 THEN
+            INSERT INTO Result (Roll, Name, Class) VALUES (r.Roll, r.Name, 'Distinction');
+        ELSIF r.total_marks BETWEEN 900 AND 989 THEN
+            INSERT INTO Result (Roll, Name, Class) VALUES (r.Roll, r.Name, 'First Class');
+        ELSIF r.total_marks BETWEEN 825 AND 899 THEN
+            INSERT INTO Result (Roll, Name, Class) VALUES (r.Roll, r.Name, 'Higher Second Class');
+        END IF;
+    END LOOP;
+    COMMIT;
+END proc_Grade;
+/
+BEGIN
+    proc_Grade;
+END;
+/

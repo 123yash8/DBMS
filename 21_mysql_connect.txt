@@ -1,0 +1,41 @@
+import mysql.connector
+
+# Create a connection
+cnx = mysql.connector.connect(user='username', password='password',
+                              host='localhost',
+                              database='testdb')
+
+# Create a cursor
+cursor = cnx.cursor()
+
+# Insert a record
+query = ("INSERT INTO employees "
+         "(first_name, last_name, hire_date) "
+         "VALUES (%s, %s, %s)")
+data_employee = ('John', 'Doe', date(2000, 1, 1))
+cursor.execute(query, data_employee)
+
+# Make sure data is committed to the database
+cnx.commit()
+
+# Retrieve all records
+query = ("SELECT * FROM employees")
+cursor.execute(query)
+
+for (first_name, last_name, hire_date) in cursor:
+  print(f"{first_name} {last_name} was hired on {hire_date}")
+
+# Update a record
+query = ("UPDATE employees SET first_name = %s "
+         "WHERE last_name = %s")
+data_employee = ('Jane', 'Doe')
+cursor.execute(query, data_employee)
+
+# Delete a record
+query = ("DELETE FROM employees WHERE first_name = %s")
+data_employee = ('Jane',)
+cursor.execute(query, data_employee)
+
+# Close cursor & connection
+cursor.close()
+cnx.close()

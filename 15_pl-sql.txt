@@ -1,0 +1,19 @@
+-- Create the table
+CREATE TABLE areas (
+    radius NUMBER(3,2),
+    area NUMBER(6,2)
+);
+
+-- PL/SQL block to calculate and insert the areas
+DECLARE
+    pi CONSTANT NUMBER := 3.14159;
+    r NUMBER(3,2);
+    a NUMBER(6,2);
+BEGIN
+    FOR r IN 5..9 LOOP
+        a := pi * r * r;
+        INSERT INTO areas (radius, area) VALUES (r, a);
+    END LOOP;
+    COMMIT;
+END;
+/

@@ -1,0 +1,60 @@
+-- Create the N_RollCall table
+CREATE TABLE N_RollCall (
+    ID NUMBER,
+    Name VARCHAR2(50),
+    Attendance NUMBER
+);
+
+-- Insert some sample data
+INSERT INTO N_RollCall (ID, Name, Attendance) VALUES (1, 'John Doe', 80);
+INSERT INTO N_RollCall (ID, Name, Attendance) VALUES (2, 'Jane Doe', 70);
+COMMIT;
+
+-- Create the O_RollCall table
+CREATE TABLE O_RollCall (
+    ID NUMBER,
+    Name VARCHAR2(50),
+    Attendance NUMBER
+);
+
+-- Insert some sample data
+INSERT INTO O_RollCall (ID, Name, Attendance) VALUES (3, 'Alice', 85);
+INSERT INTO O_RollCall (ID, Name, Attendance) VALUES (4, 'Bob', 75);
+COMMIT;
+DECLARE 
+    -- Declare a record type to hold a row from N_RollCall
+    n_rollcall_rec N_RollCall%ROWTYPE;
+
+    -- Declare a cursor to select all records from N_RollCall
+    CURSOR n_rollcall_cur IS SELECT * FROM N_RollCall;
+BEGIN 
+    -- Open the cursor
+    OPEN n_rollcall_cur;
+
+    -- Fetch rows from N_RollCall one at a time
+    LOOP
+        FETCH n_rollcall_cur INTO n_rollcall_rec;
+        EXIT WHEN n_rollcall_cur%NOTFOUND;
+
+        -- Check if the record already exists in O_RollCall
+        DECLARE 
+            count_rec NUMBER;
+        BEGIN
+            SELECT COUNT(*) INTO count_rec FROM O_RollCall WHERE ID = n_rollcall_rec.ID;
+
+            -- If the record does not exist in O_RollCall, insert it
+            IF count_rec = 0 THEN
+                INSERT INTO O_RollCall VALUES n_rollcall_rec;
+            END IF;
+        END;
+    END LOOP;
+
+    -- Close the cursor
+    CLOSE n_rollcall_cur;
+
+    COMMIT;
+EXCEPTION 
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/

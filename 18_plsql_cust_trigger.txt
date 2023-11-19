@@ -1,0 +1,29 @@
+CREATE TABLE CUSTOMERS (
+    ID INT PRIMARY KEY,
+    NAME VARCHAR(100),
+    SALARY NUMBER
+);
+CREATE OR REPLACE TRIGGER salary_diff_trigger
+AFTER INSERT OR UPDATE OR DELETE ON CUSTOMERS
+FOR EACH ROW
+DECLARE
+    salary_diff NUMBER;
+BEGIN
+    IF INSERTING THEN
+        DBMS_OUTPUT.PUT_LINE('New salary: ' || :NEW.SALARY);
+    ELSIF UPDATING THEN
+        salary_diff := :NEW.SALARY - :OLD.SALARY;
+        DBMS_OUTPUT.PUT_LINE('Salary difference: ' || salary_diff);
+    ELSIF DELETING THEN
+        DBMS_OUTPUT.PUT_LINE('Deleted salary: ' || :OLD.SALARY);
+    END IF;
+END;
+/
+-- Insert a new row
+INSERT INTO CUSTOMERS (ID, NAME, SALARY) VALUES (1, 'John Doe', 50000);
+
+-- Update a row
+UPDATE CUSTOMERS SET SALARY = 60000 WHERE ID = 1;
+
+-- Delete a row
+DELETE FROM CUSTOMERS WHERE ID = 1;

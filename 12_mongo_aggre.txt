@@ -1,0 +1,39 @@
+// Create Employee collection
+db.createCollection("Employee")
+
+// Insert documents
+db.Employee.insertMany([
+    { Emp_id: 1, Name: { FName: "John", LName: "Doe" }, Company_Name: "ABC", Salary: 50000, Designation: "DBA", Age: 30, Expertise: ["MongoDB", "SQL"], DOB: new Date("1990-01-01"), Email_id: "john.doe@example.com", Contact: "1234567890", Address: [{ PAddr: "123 Street, City", LAddr: "456 Lane, City" }] },
+    // Add more documents here
+])
+
+// 1. Using aggregation Return Designation with Total Salary is Above 200000
+db.Employee.aggregate([
+    { $group: { _id: "$Designation", totalSalary: { $sum: "$Salary" } } },
+    { $match: { totalSalary: { $gt: 200000 } } }
+])
+
+// 2. Using Aggregate method returns names and _id in upper case and in alphabetical order
+db.Employee.aggregate([
+    { $project: { _id: 1, FName: { $toUpper: "$Name.FName" }, LName: { $toUpper: "$Name.LName" } } },
+    { $sort: { FName: 1, LName: 1 } }
+])
+
+// 3. Using aggregation method find Employee with Total Salary for Each City with Designation="DBA"
+db.Employee.aggregate([
+    { $match: { Designation: "DBA" } },
+    { $group: { _id: "$Address.City", totalSalary: { $sum: "$Salary" } } }
+])
+
+// 4. Create Single Field Indexes on Designation field of employee collection
+db.Employee.createIndex({ Designation: 1 })
+
+// 5. To Create Multikey Indexes on Expertise field of employee collection
+db.Employee.createIndex({ Expertise: 1 })
+
+// 6. Create an Index on Emp_id field, compare the time require to search Emp_id before and after creating an index
+db.Employee.createIndex({ Emp_id: 1 })
+// To compare, you can use .explain("executionStats") on your find query before and after creating the index
+
+// 7. Return a List of Indexes on created on employee Collection
+db.Employee.getIndexes()

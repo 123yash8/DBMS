@@ -1,0 +1,46 @@
+-- Create the Stud table
+CREATE TABLE Stud (
+    Roll NUMBER(5),
+    Name VARCHAR2(255),
+    Attendance NUMBER(300, 200),
+    Status VARCHAR2(20)
+);
+
+-- Insert some sample data
+INSERT INTO Stud (Roll, Name, Attendance, Status) VALUES (1, 'John Doe', 80, NULL);
+INSERT INTO Stud (Roll, Name, Attendance, Status) VALUES (2, 'Jane Doe', 70, NULL);
+COMMIT;
+
+-- Declare variables
+DECLARE 
+    roll_no Stud.Roll%TYPE; 
+    stud_attendance Stud.Attendance%TYPE;
+    stud_status Stud.Status%TYPE;
+BEGIN 
+    -- User enters the roll number
+    DBMS_OUTPUT.PUT_LINE('Enter Roll Number:'); 
+    roll_no := &roll_no;
+
+    -- Select attendance of the student with the entered roll number
+    SELECT Attendance INTO stud_attendance FROM Stud WHERE Roll = roll_no;
+
+    -- Check attendance and update status
+    IF stud_attendance < 75 THEN
+        stud_status := 'Detained';
+        DBMS_OUTPUT.PUT_LINE('Term not granted');
+    ELSE
+        stud_status := 'Not Detained';
+        DBMS_OUTPUT.PUT_LINE('Term granted');
+    END IF;
+
+    -- Update the status in the Stud table
+    UPDATE Stud SET Status = stud_status WHERE Roll = roll_no;
+
+    COMMIT;
+EXCEPTION 
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No student found with the entered roll number.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred.');
+END;
+/

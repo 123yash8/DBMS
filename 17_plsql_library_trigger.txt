@@ -1,0 +1,28 @@
+CREATE TABLE Library (
+    BookID INT,
+    BookName VARCHAR(100),
+    AuthorName VARCHAR(100),
+    PublishedYear INT
+);
+CREATE TABLE Library_Audit (
+    AuditID INT  PRIMARY KEY,
+    BookID INT,
+    BookName VARCHAR(100),
+    AuthorName VARCHAR(100),
+    PublishedYear INT,
+    Operation VARCHAR(20),
+    OperationTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TRIGGER Library_Audit_Trigger
+AFTER UPDATE OR DELETE ON Library
+FOR EACH ROW
+BEGIN
+    IF UPDATING THEN
+        INSERT INTO Library_Audit (BookID, BookName, AuthorName, PublishedYear, Operation)
+        VALUES (:OLD.BookID, :OLD.BookName, :OLD.AuthorName, :OLD.PublishedYear, 'UPDATE');
+    ELSIF DELETING THEN
+        INSERT INTO Library_Audit (BookID, BookName, AuthorName, PublishedYear, Operation)
+        VALUES (:OLD.BookID, :OLD.BookName, :OLD.AuthorName, :OLD.PublishedYear, 'DELETE');
+    END IF;
+END;
+/

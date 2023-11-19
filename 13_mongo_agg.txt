@@ -1,0 +1,42 @@
+// Create Employee collection
+db.createCollection("Employee")
+
+// Insert documents
+db.Employee.insertMany([
+    { Emp_id: 1, Name: { FName: "John", LName: "Doe" }, Company_Name: "ABC", Salary: 50000, Designation: "DBA", Age: 30, Expertise: ["MongoDB", "SQL"], DOB: new Date("1990-01-01"), Email_id: "john.doe@example.com", Contact: "1234567890", Address: [{ PAddr: "123 Street, City", LAddr: "456 Lane, City" }] },
+    // Add more documents here
+])
+
+// 1. Using aggregation Return separates value in the Expertise array and return sum of each element of array
+db.Employee.aggregate([
+    { $unwind: "$Expertise" },
+    { $group: { _id: "$Expertise", count: { $sum: 1 } } }
+])
+
+// 2. Using Aggregate method return Max and Min Salary for each company
+db.Employee.aggregate([
+    { $group: { _id: "$Company_Name", maxSalary: { $max: "$Salary" }, minSalary: { $min: "$Salary" } } }
+])
+
+// 3. Using Aggregate method find Employee with Total Salary for Each City with Designation="DBA"
+db.Employee.aggregate([
+    { $match: { Designation: "DBA" } },
+    { $group: { _id: "$Address.City", totalSalary: { $sum: "$Salary" } } }
+])
+
+// 4. Using aggregation method Return separates value in the Expertise array for employee name where Swapnil Jadhav
+db.Employee.aggregate([
+    { $match: { "Name.FName": "Swapnil", "Name.LName": "Jadhav" } },
+    { $unwind: "$Expertise" },
+    { $project: { _id: 0, Expertise: 1 } }
+])
+
+// 5. To Create Compound Indexes on Name: 1, Age: -1
+db.Employee.createIndex({ "Name.FName": 1, "Name.LName": 1, Age: -1 })
+
+// 6. Create an Index on Emp_id field, compare the time require to search Emp_id before and after creating an index
+db.Employee.createIndex({ Emp_id: 1 })
+// To compare, you can use .explain("executionStats") on your find query before and after creating the index
+
+// 7. Return a List of Indexes on created on employee Collection
+db.Employee.getIndexes()

@@ -1,0 +1,32 @@
+CREATE TABLE Emp (
+    Emp_no INT PRIMARY KEY,
+    Emp_name VARCHAR(100),
+    Emp_salary NUMBER
+);
+CREATE TABLE Tracking (
+    Emp_no INT,
+    Emp_salary NUMBER
+);
+CREATE OR REPLACE TRIGGER salary_check_trigger
+AFTER INSERT OR UPDATE ON Emp
+FOR EACH ROW
+BEGIN
+    IF INSERTING THEN
+        IF :NEW.Emp_salary < 50000 THEN
+            INSERT INTO Tracking (Emp_no, Emp_salary)
+            VALUES (:NEW.Emp_no, :NEW.Emp_salary);
+        END IF;
+    ELSIF UPDATING THEN
+        IF :NEW.Emp_salary < 50000 THEN
+            INSERT INTO Tracking (Emp_no, Emp_salary)
+            VALUES (:NEW.Emp_no, :NEW.Emp_salary);
+        END IF;
+    END IF;
+END;
+/
+-- Insert a new row
+INSERT INTO Emp (Emp_no, Emp_name, Emp_salary) VALUES (1, 'John Doe', 40000);
+
+-- Update a row
+UPDATE Emp SET Emp_salary = 45000 WHERE Emp_no = 1;
+select * from Tracking;

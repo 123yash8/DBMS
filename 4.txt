@@ -1,0 +1,72 @@
+-- Creating tables
+CREATE TABLE Cust_Master(
+    Cust_no VARCHAR(255) PRIMARY KEY,
+    Cust_name VARCHAR(255) NOT NULL,
+    Cust_addr VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Order_Master(
+    Order_no INT PRIMARY KEY,
+    Cust_no VARCHAR(255) NOT NULL,
+    Order_date DATE NOT NULL,
+    Qty_Ordered INT NOT NULL,
+    FOREIGN KEY (Cust_no) REFERENCES Cust_Master(Cust_no)
+);
+
+CREATE TABLE Product(
+    Product_no INT PRIMARY KEY,
+    Product_name VARCHAR(255) NOT NULL,
+    Order_no INT NOT NULL,
+    FOREIGN KEY (Order_no) REFERENCES Order_Master(Order_no)
+);
+
+-- Inserting records
+-- Please replace 'value' with actual data
+INSERT INTO Cust_Master VALUES ('value', 'value', 'value');
+INSERT INTO Order_Master VALUES ('value', 'value', 'value', 'value');
+INSERT INTO Product VALUES ('value', 'value', 'value');
+
+-- Queries
+-- 1. List names of customers having 'A' as second letter in their name.
+SELECT Cust_name FROM Cust_Master WHERE Cust_name LIKE '_A%';
+
+-- 2. Display order from Customer no C1002,C1005,C1007 and C1008
+SELECT * FROM Order_Master WHERE Cust_no IN ('C1002', 'C1005', 'C1007', 'C1008');
+
+-- 3. List Clients who stay in either 'Banglore or 'Manglore'
+SELECT Cust_name FROM Cust_Master WHERE Cust_addr IN ('Banglore', 'Manglore');
+
+-- 4. Display name of customers & the product_name they have purchased
+SELECT CM.Cust_name, P.Product_name
+FROM Cust_Master CM, Order_Master OM, Product P
+WHERE CM.Cust_no = OM.Cust_no AND OM.Order_no = P.Order_no;
+
+-- 5. Create view View1 consisting of Cust_name, Product_name.
+CREATE VIEW View1 AS
+SELECT CM.Cust_name, P.Product_name
+FROM Cust_Master CM, Order_Master OM, Product P
+WHERE CM.Cust_no = OM.Cust_no AND OM.Order_no = P.Order_no;
+
+-- 6. Display product_name and quantity purchased by each customer
+SELECT CM.Cust_name, P.Product_name, OM.Qty_Ordered
+FROM Cust_Master CM, Order_Master OM, Product P
+WHERE CM.Cust_no = OM.Cust_no AND OM.Order_no = P.Order_no;
+
+-- 7. Perform different joint operation.
+-- Inner Join
+SELECT CM.Cust_name, P.Product_name
+FROM Cust_Master CM
+JOIN Order_Master OM ON CM.Cust_no = OM.Cust_no
+JOIN Product P ON OM.Order_no = P.Order_no;
+
+-- Left Join
+SELECT CM.Cust_name, P.Product_name
+FROM Cust_Master CM
+LEFT JOIN Order_Master OM ON CM.Cust_no = OM.Cust_no
+LEFT JOIN Product P ON OM.Order_no = P.Order_no;
+
+-- Right Join
+SELECT CM.Cust_name, P.Product_name
+FROM Cust_Master CM
+RIGHT JOIN Order_Master OM ON CM.Cust_no = OM.Cust_no
+RIGHT JOIN Product P ON OM.Order_no = P.Order_no;

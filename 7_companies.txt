@@ -1,0 +1,43 @@
+-- 1. Find names, costs, domains and quantities for companies using inner join.
+SELECT C.name, C.cost, O.domain, O.quantity
+FROM Companies C
+INNER JOIN Orders O ON C.comp_id = O.comp_id;
+
+-- 2. Find names, costs, domains and quantities for companies using left outer join.
+SELECT C.name, C.cost, O.domain, O.quantity
+FROM Companies C
+LEFT OUTER JOIN Orders O ON C.comp_id = O.comp_id;
+
+-- 3. Find names, costs, domains and quantities for companies using right outer join.
+SELECT C.name, C.cost, O.domain, O.quantity
+FROM Companies C
+RIGHT OUTER JOIN Orders O ON C.comp_id = O.comp_id;
+
+-- 4. Find names, costs, domains and quantities for companies using Union operator.
+SELECT C.name, C.cost, NULL AS domain, NULL AS quantity
+FROM Companies C
+UNION
+SELECT NULL AS name, NULL AS cost, O.domain, O.quantity
+FROM Orders O;
+
+-- 5. Create View View1 by selecting both tables to show company name and quantities.
+CREATE VIEW View1 AS
+SELECT C.name, O.quantity
+FROM Companies C, Orders O
+WHERE C.comp_id = O.comp_id;
+
+-- 6. Create View View2 by selecting any two columns and perform insert update delete operations.
+CREATE VIEW View2 AS SELECT name, cost FROM Companies;
+
+-- Insert operation
+INSERT INTO View2 VALUES ('Company1', 10000);
+
+-- Update operation
+UPDATE View2 SET cost = 20000 WHERE name = 'Company1';
+
+-- Delete operation
+DELETE FROM View2 WHERE name = 'Company1';
+
+-- 7. Display content of View1, View2.
+SELECT * FROM View1;
+SELECT * FROM View2;

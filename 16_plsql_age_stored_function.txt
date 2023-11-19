@@ -1,0 +1,36 @@
+CREATE OR REPLACE FUNCTION Age_calc(
+    p_dob IN DATE,
+    p_months OUT NUMBER,
+    p_days OUT NUMBER
+) RETURN NUMBER IS
+    v_years NUMBER;
+    v_months NUMBER;
+    v_days NUMBER;
+BEGIN
+    -- Calculate the difference in years, months and days
+    v_years := TRUNC(MONTHS_BETWEEN(SYSDATE, p_dob) / 12);
+    v_months := TRUNC(MOD(MONTHS_BETWEEN(SYSDATE, p_dob), 12));
+    v_days := TRUNC(SYSDATE - ADD_MONTHS(p_dob, v_years * 12 + v_months));
+
+    -- Assign the months and days to the OUT parameters
+    p_months := v_months;
+    p_days := v_days;
+
+    -- Return the years
+    RETURN v_years;
+END Age_calc;
+/
+DECLARE
+    v_years NUMBER;
+    v_months NUMBER;
+    v_days NUMBER;
+BEGIN
+    -- Call the function
+    v_years := Age_calc(TO_DATE('1980-01-01', 'YYYY-MM-DD'), v_months, v_days);
+
+    -- Display the results
+    DBMS_OUTPUT.PUT_LINE('Years: ' || v_years);
+    DBMS_OUTPUT.PUT_LINE('Months: ' || v_months);
+    DBMS_OUTPUT.PUT_LINE('Days: ' || v_days);
+END;
+/

@@ -1,0 +1,42 @@
+// Create Employee collection and insert documents
+db.Employee.insertMany([
+    {
+        Emp_id: 1,
+        Name: {FName: 'John', LName: 'Doe'},
+        Company_Name: 'TCS',
+        Salary: 50000,
+        Designation: 'Programmer',
+        Age: 30,
+        Expertise: ['Java', 'Python', 'MongoDB'],
+        DOB: new Date('1990-01-01'),
+        Email_id: 'john.doe@example.com',
+        Contact: '1234567890',
+        Address: [{PAddr: 'Address1', LAddr: 'Address2'}]
+    },
+    // Insert more documents...
+]);
+
+// 1. Creates a new document if no document in the employee collection contains {Designation: "Tester", Company_name: "TCS", Age: 25}
+db.Employee.updateOne(
+    {Designation: 'Tester', Company_Name: 'TCS', Age: 25},
+    {$setOnInsert: {Designation: 'Tester', Company_Name: 'TCS', Age: 25}},
+    {upsert: true}
+);
+
+// 2. Finds all employees working with Company_name: "TCS" and increase their salary by 2000.
+db.Employee.updateMany(
+    {Company_Name: 'TCS'},
+    {$inc: {Salary: 2000}}
+);
+
+// 3. Matches all documents where the value of the field Address is an embedded document that contains only the field city with the value "Pune" and the field Pin_code with the value "411001".
+db.Employee.find({'Address.city': 'Pune', 'Address.Pin_code': '411001'});
+
+// 4. Find employee details who are working as "Developer" or "Tester".
+db.Employee.find({Designation: {$in: ['Developer', 'Tester']}});
+
+// 5. Drop Single documents where designation="Developer".
+db.Employee.deleteOne({Designation: 'Developer'});
+
+// 6. Count number of documents in employee collection.
+db.Employee.countDocuments();

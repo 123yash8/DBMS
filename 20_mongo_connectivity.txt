@@ -1,0 +1,24 @@
+from pymongo import MongoClient
+
+# Create a connection
+client = MongoClient('localhost', 27017)
+
+# Access the 'test' database
+db = client['test']
+
+# Access the 'employees' collection
+employees = db['employees']
+
+# Insert a document
+employee = {"name": "John Doe", "age": 30, "department": "HR"}
+employees.insert_one(employee)
+
+# Find a document
+result = employees.find_one({"name": "John Doe"})
+print(result)
+
+# Update a document
+employees.update_one({"name": "John Doe"}, {"$set": {"age": 31}})
+
+# Delete a document
+employees.delete_one({"name": "John Doe"})

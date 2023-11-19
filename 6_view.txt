@@ -1,0 +1,49 @@
+-- 1. Create a View1 to display List all customers in alphabetical order who have loan from Pune_Station branch.
+CREATE VIEW View1 AS
+SELECT C.cust_name
+FROM Customer C, Borrower B, Loan L
+WHERE C.cust_name = B.cust_name AND B.loan_no = L.loan_no AND L.branch_name = 'Pune_Station'
+ORDER BY C.cust_name;
+
+-- 2. Create View2 on branch table by selecting any two columns and perform insert update delete operations.
+CREATE VIEW View2 AS SELECT branch_name, branch_city FROM Branch;
+
+-- Insert operation
+INSERT INTO View2 VALUES ('Branch1', 'City1');
+
+-- Update operation
+UPDATE View2 SET branch_city = 'City2' WHERE branch_name = 'Branch1';
+
+-- Delete operation
+DELETE FROM View2 WHERE branch_name = 'Branch1';
+
+-- 3. Create View3 on borrower and depositor table by selecting any one column from each table perform insert update delete operations.
+CREATE VIEW View3 AS SELECT B.cust_name, D.acc_no FROM Borrower B, Depositor D WHERE B.cust_name = D.cust_name;
+
+-- Insert operation
+INSERT INTO View3 VALUES ('Customer1', 12345);
+
+-- Update operation
+UPDATE View3 SET acc_no = 67890 WHERE cust_name = 'Customer1';
+
+-- Delete operation
+DELETE FROM View3 WHERE cust_name = 'Customer1';
+
+-- 4. Create Union of left and right joint for all customers who have an account or loan or both at bank
+SELECT C.cust_name
+FROM Customer C
+LEFT JOIN Depositor D ON C.cust_name = D.cust_name
+UNION
+SELECT C.cust_name
+FROM Customer C
+RIGHT JOIN Borrower B ON C.cust_name = B.cust_name;
+
+-- 5. Create Simple and Unique index.
+CREATE INDEX idx_branch_name ON Branch (branch_name);
+CREATE UNIQUE INDEX idx_cust_name ON Customer (cust_name);
+
+-- 6. Display index Information
+-- The command to display index information varies depending on the SQL database you are using. 
+-- For MySQL, you can use the following command:
+SHOW INDEX FROM Branch;
+SHOW INDEX FROM Customer;

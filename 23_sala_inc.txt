@@ -1,0 +1,27 @@
+CREATE TABLE emp (
+    emp_no NUMBER,
+    salary NUMBER
+);
+
+CREATE TABLE increment_salary (
+    emp_no NUMBER,
+    salary NUMBER
+);
+DECLARE
+    avg_salary NUMBER;
+BEGIN
+    -- Calculate the average salary
+    SELECT AVG(salary) INTO avg_salary FROM emp;
+
+    -- Increase the salary of employees who are having salary less than the average salary
+    FOR r IN (SELECT * FROM emp WHERE salary < avg_salary) LOOP
+        UPDATE emp SET salary = salary * 1.1 WHERE emp_no = r.emp_no;
+
+        -- Insert a record into the increment_salary table
+        INSERT INTO increment_salary (emp_no, salary)
+        VALUES (r.emp_no, r.salary * 1.1);
+    END LOOP;
+
+    COMMIT;
+END;
+/

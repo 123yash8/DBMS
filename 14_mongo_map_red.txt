@@ -1,0 +1,43 @@
+// Create Employee collection
+db.createCollection("Employee")
+
+// Insert documents
+db.Employee.insertMany([
+    { Name: { FName: "John", LName: "Doe" }, Company_Name: "ABC", Salary: 50000, Designation: "DBA", Age: 30, Expertise: ["MongoDB", "SQL"], DOB: new Date("1990-01-01"), Email_id: "john.doe@example.com", Contact: "1234567890", Address: [{ PAddr: "123 Street, Pune", LAddr: "456 Lane, Pune" }] },
+    // Add more documents here
+])
+
+// 1. Display the total salary of per company
+db.Employee.mapReduce(
+    function() { emit(this.Company_Name, this.Salary); },
+    function(key, values) { return Array.sum(values); },
+    { out: "total_salary_per_company" }
+)
+
+// 2. Display the total salary of company Name:"TCS"
+db.Employee.mapReduce(
+    function() { if (this.Company_Name === "TCS") emit(this.Company_Name, this.Salary); },
+    function(key, values) { return Array.sum(values); },
+    { out: "total_salary_for_TCS" }
+)
+
+// 3. Return the average salary of company whose address is “Pune"
+db.Employee.mapReduce(
+    function() { if (this.Address.some(addr => addr.PAddr.includes("Pune") || addr.LAddr.includes("Pune"))) emit(this.Company_Name, this.Salary); },
+    function(key, values) { return Array.avg(values); },
+    { out: "average_salary_in_Pune" }
+)
+
+// 4. Display total count for “City=Pune”
+db.Employee.mapReduce(
+    function() { if (this.Address.some(addr => addr.PAddr.includes("Pune") || addr.LAddr.includes("Pune"))) emit("Pune", 1); },
+    function(key, values) { return Array.sum(values); },
+    { out: "total_count_in_Pune" }
+)
+
+// 5. Return count for city pune and age greater than 40
+db.Employee.mapReduce(
+    function() { if (this.Age > 40 && this.Address.some(addr => addr.PAddr.includes("Pune") || addr.LAddr.includes("Pune"))) emit("Pune", 1); },
+    function(key, values) { return Array.sum(values); },
+    { out: "count_in_Pune_age_gt_40" }
+)

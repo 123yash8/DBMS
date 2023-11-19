@@ -1,0 +1,54 @@
+-- Creating tables
+CREATE TABLE CUSTOMERS(
+    CNo INT PRIMARY KEY,
+    Cname VARCHAR(255) NOT NULL,
+    Ccity VARCHAR(255) NOT NULL,
+    CMobile VARCHAR(10) NOT NULL
+);
+
+CREATE TABLE ITEMS(
+    INo INT PRIMARY KEY,
+    Iname VARCHAR(255) NOT NULL,
+    Itype VARCHAR(255) NOT NULL,
+    Iprice DECIMAL(10, 2) NOT NULL,
+    Icount INT NOT NULL
+);
+
+CREATE TABLE PURCHASE(
+    PNo INT PRIMARY KEY,
+    Pdate DATE NOT NULL,
+    Pquantity INT NOT NULL,
+    Cno INT,
+    INo INT,
+    FOREIGN KEY (Cno) REFERENCES CUSTOMERS(CNo),
+    FOREIGN KEY (INo) REFERENCES ITEMS(INo)
+);
+
+-- Inserting records
+-- Please replace 'value' with actual data
+INSERT INTO CUSTOMERS VALUES ('value', 'value', 'value', 'value');
+INSERT INTO ITEMS VALUES ('value', 'value', 'value', 'value', 'value');
+INSERT INTO PURCHASE VALUES ('value', 'value', 'value', 'value', 'value');
+
+-- Queries
+-- 1. List all stationary items with price between 400/- to 1000/-
+SELECT Iname FROM ITEMS WHERE Itype = 'stationary' AND Iprice BETWEEN 400 AND 1000;
+
+-- 2. Change the mobile number of customer “Gopal”
+-- Please replace 'new_number' with the new mobile number
+UPDATE CUSTOMERS SET CMobile = 'new_number' WHERE Cname = 'Gopal';
+
+-- 3. Display the item with maximum price
+SELECT Iname FROM ITEMS WHERE Iprice = (SELECT MAX(Iprice) FROM ITEMS);
+
+-- 4. Display all purchases sorted from the most recent to the oldest
+SELECT * FROM PURCHASE ORDER BY Pdate DESC;
+
+-- 5. Count the number of customers in every city
+SELECT Ccity, COUNT(*) FROM CUSTOMERS GROUP BY Ccity;
+
+-- 6. Display all purchased quantity of Customer Maya
+SELECT Pquantity FROM PURCHASE WHERE Cno = (SELECT CNo FROM CUSTOMERS WHERE Cname = 'Maya');
+
+-- 7. Create view which shows Iname, Price and Count of all stationary items in descending order of price
+CREATE VIEW View1 AS SELECT Iname, Iprice, Icount FROM ITEMS WHERE Itype = 'stationary' ORDER BY Iprice DESC;
